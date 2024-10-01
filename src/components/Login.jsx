@@ -32,8 +32,6 @@ const Login = () => {
 
       // Set a cookie with user information
       Cookie.set("user", JSON.stringify(user), { expires: 7 }); // Expires in 7 days
-
-      console.log("Login successful:", response.data);
       navigate("/dashboard"); // Redirect to dashboard after login
     } catch (error) {
       setError(error.response.data.message || "Login failed");

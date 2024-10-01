@@ -1,4 +1,3 @@
-// components/AddCourse.jsx
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -20,6 +19,7 @@ const AddCourse = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [trainerId, setTrainerId] = useState("");
+  const [trainerName, setTrainerName] = useState(""); // Add trainerName
   const [employeeIds, setEmployeeIds] = useState([]);
   const [trainers, setTrainers] = useState([]);
   const [employees, setEmployees] = useState([]);
@@ -41,15 +41,24 @@ const AddCourse = () => {
       .catch((err) => console.error("Error fetching employees:", err));
   }, []); // Empty dependency array to run once on mount
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Find selected trainer's name based on the trainerId
+    const selectedTrainer = trainers.find(
+      (trainer) => trainer._id === trainerId
+    );
+
     const courseData = {
       title,
       description,
-      trainer_id: trainerId,
-      employee_ids: employeeIds,
+      trainer: {
+        trainer_id: trainerId,
+        trainer_name: selectedTrainer ? selectedTrainer.name : "",
+      },
+      employees: employeeIds, // Array of employee IDs
     };
+    console.log(courseData);
 
     try {
       const response = await axios.post(
@@ -109,7 +118,13 @@ const AddCourse = () => {
         <InputLabel>Select Trainer</InputLabel>
         <Select
           value={trainerId}
-          onChange={(e) => setTrainerId(e.target.value)}
+          onChange={(e) => {
+            setTrainerId(e.target.value);
+            const selectedTrainer = trainers.find(
+              (trainer) => trainer._id === e.target.value
+            );
+            setTrainerName(selectedTrainer?.name || "");
+          }}
           label="Select Trainer"
         >
           <MenuItem value="">
