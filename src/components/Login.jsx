@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { TextField, Button, Box, Typography, Container } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import Cookie from 'js-cookie'; // Import js-cookie
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ const Login = () => {
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const user = Cookie.get("user") ? JSON.parse(Cookie.get("user")) : null;
 
   const handleChange = (e) => {
     setFormData({
@@ -22,9 +24,15 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/users/login",
+        "http://localhost:5000/api/users/login", // Ensure the URL is correct
         formData
       );
+
+      const user = response.data; // Get user data from the response
+
+      // Set a cookie with user information
+      Cookie.set("user", JSON.stringify(user), { expires: 7 }); // Expires in 7 days
+
       console.log("Login successful:", response.data);
       navigate("/dashboard"); // Redirect to dashboard after login
     } catch (error) {
