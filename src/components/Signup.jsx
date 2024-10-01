@@ -40,7 +40,7 @@ const Signup = () => {
         formData
       );
       console.log("Signup successful:", response.data);
-    //   navigate("/login");
+      navigate("/login");
     } catch (error) {
       setError(error.response.data.message || "Signup failed");
     }

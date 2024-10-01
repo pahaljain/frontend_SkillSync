@@ -5,6 +5,7 @@ import Signup from "./components/Signup";
 import Navbar from "./components/Navbar";
 import Dashboard from "./components/Dashboard";
 import Cookie from 'js-cookie'; // Import js-cookie
+import AddCourse from "./components/AdminPages/AddCourse";
 
 function App() {
   const user = Cookie.get("user");
@@ -17,6 +18,7 @@ function App() {
           element={user ? <Navigate to="/dashboard" /> : <Login />}
         />
         <Route path="/login" element={<Login />} />
+        <Route path="/addCourse" element={<AddCourse />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<Dashboard />} />
       </Routes>

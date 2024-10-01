@@ -23,9 +23,12 @@ const Navbar = () => {
     <AppBar position="static">
       <Toolbar>
         <Typography variant="h6" component={Link} to="/" sx={{ flexGrow: 1 }}>
-          MyApp
+          SkillSync
         </Typography>
         <Box>
+          <Button color="inherit" component={Link} to="/addCourse">
+            Add Course
+          </Button>
           {!user ? (
             <>
               <Button color="inherit" component={Link} to="/login">
