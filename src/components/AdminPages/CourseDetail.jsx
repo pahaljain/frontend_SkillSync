@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { Typography, Card, CardContent, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
+import { Typography, Card, CardContent, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Button } from "@mui/material";
+import Cookie from 'js-cookie';
 
 const CourseDetail = () => {
   const { id } = useParams();
   const [course, setCourse] = useState(null);
+  const [feedback, setFeedback] = useState({});
+  const [message, setMessage] = useState('');
+  const user = Cookie.get("user") ? JSON.parse(Cookie.get("user")) : null;
 
+  // Fetch course details
   useEffect(() => {
     const fetchCourse = async () => {
       try {
@@ -22,6 +27,29 @@ const CourseDetail = () => {
   if (!course) {
     return <Typography variant="h6">Loading course details...</Typography>;
   }
+
+  // Handle score input change
+  const handleFeedbackChange = (employeeId, value) => {
+    setFeedback((prevFeedback) => ({
+      ...prevFeedback,
+      [employeeId]: value,
+    }));
+  };
+
+  // Handle score submission
+  const handleSubmitScore = async (employeeId) => {
+    try {
+      const enrollmentId = course.employees.find((emp) => emp._id === employeeId).enrollment_id; // Assuming enrollment_id is stored in employee object
+      const response = await axios.post('http://localhost:5000/api/performance/assign-score', {
+        enrollment_id: enrollmentId,
+        feedback: feedback[employeeId]
+      });
+      setMessage(response.data.message);
+    } catch (error) {
+      console.error('Error assigning score:', error);
+      setMessage('Failed to assign score');
+    }
+  };
 
   return (
     <Box m={3}>
@@ -52,17 +80,48 @@ const CourseDetail = () => {
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
+              <TableCell>Assign Feedback</TableCell>
+              <TableCell>Submit</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {course.employees.map((employee) => (
               <TableRow key={employee._id}>
                 <TableCell>{employee.name}</TableCell>
+                
+                {/* Input field for feedback */}
+                <TableCell>
+                  <TextField
+                    label="Feedback"
+                    value={feedback[employee._id] || ""}
+                    onChange={(e) => handleFeedbackChange(employee._id, e.target.value)}
+                    variant="outlined"
+                    fullWidth
+                  />
+                </TableCell>
+
+                {/* Submit button */}
+                <TableCell>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleSubmitScore(employee._id)}
+                  >
+                    Submit
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* Message after score submission */}
+      {message && (
+        <Typography variant="body1" color="success" sx={{ mt: 2 }}>
+          {message}
+        </Typography>
+      )}
     </Box>
   );
 };
