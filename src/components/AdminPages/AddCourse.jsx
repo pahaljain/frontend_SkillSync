@@ -19,28 +19,27 @@ const AddCourse = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [trainerId, setTrainerId] = useState("");
-  const [trainerName, setTrainerName] = useState(""); // Add trainerName
   const [employeeIds, setEmployeeIds] = useState([]);
   const [trainers, setTrainers] = useState([]);
   const [employees, setEmployees] = useState([]);
-
+  
   const navigate = useNavigate();
 
   // Fetch trainers and employees when component mounts
   useEffect(() => {
     // Fetch Trainers
     axios
-      .get("http://localhost:5000/api/users") // Ensure this endpoint is correct
+      .get("http://localhost:5000/api/users")
       .then((res) => setTrainers(res.data))
       .catch((err) => console.error("Error fetching users:", err));
 
     // Fetch Employees
     axios
-      .get("http://localhost:5000/api/employees") // Ensure this endpoint is correct
+      .get("http://localhost:5000/api/employees")
       .then((res) => setEmployees(res.data))
       .catch((err) => console.error("Error fetching employees:", err));
-  }, []); // Empty dependency array to run once on mount
-  
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
   
@@ -55,14 +54,24 @@ const AddCourse = () => {
     const courseData = {
       title,
       description,
-      trainer_id: trainerId, // Correct trainer_id field
-      trainer_name: selectedTrainer.name, // Correct trainer_name field
+      trainer: { // Wrap trainer details in a trainer object
+        trainer_id: trainerId, // Correct trainer_id field
+        trainer_name: selectedTrainer.name, // Correct trainer_name field
+      },
       employees: employeeIds, // Array of employee IDs
     };
+    
   
     try {
       const response = await axios.post("http://localhost:5000/api/courses", courseData);
       alert("Course added successfully");
+      console.log(response.data.course._id);
+      
+      // Enroll each employee in the course
+      for (const employeeId of employeeIds) {
+        await enrollEmployee(response.data.course._id, employeeId); // Use course ID returned from the course creation
+      }
+  
       navigate("/dashboard"); // Redirect to dashboard or another page
     } catch (error) {
       console.error("Error adding course:", error);
@@ -70,7 +79,15 @@ const AddCourse = () => {
     }
   };
   
-  
+
+  const enrollEmployee = async (courseId, employeeId) => {
+    const enrollmentData = {
+      course_id: courseId,
+      employee_id: employeeId,
+    };
+
+    await axios.post("http://localhost:5000/api/enrollments", enrollmentData);
+  };
 
   return (
     <Box
@@ -117,13 +134,7 @@ const AddCourse = () => {
         <InputLabel>Select Trainer</InputLabel>
         <Select
           value={trainerId}
-          onChange={(e) => {
-            setTrainerId(e.target.value);
-            const selectedTrainer = trainers.find(
-              (trainer) => trainer._id === e.target.value
-            );
-            setTrainerName(selectedTrainer?.name || "");
-          }}
+          onChange={(e) => setTrainerId(e.target.value)}
           label="Select Trainer"
         >
           <MenuItem value="">

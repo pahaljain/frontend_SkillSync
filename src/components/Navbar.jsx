@@ -22,13 +22,24 @@ const Navbar = () => {
   return (
     <AppBar position="static">
       <Toolbar>
-        <Typography variant="h6" component={Link} to="/" sx={{ flexGrow: 1 }}>
+        <Typography
+          variant="h6"
+          component={Link}
+          to="/"
+          sx={{ flexGrow: 1 }}
+          style={{ textDecoration: 'none', color: 'white' }}
+        >
           SkillSync
         </Typography>
         <Box>
-          <Button color="inherit" component={Link} to="/addCourse">
-            Add Course
-          </Button>
+          {/* Conditionally render "Add Course" if user is logged in */}
+          {user && (
+            <Button color="inherit" component={Link} to="/addCourse">
+              Add Course
+            </Button>
+          )}
+
+          {/* If the user is not logged in, show Login and Signup */}
           {!user ? (
             <>
               <Button color="inherit" component={Link} to="/login">
@@ -39,6 +50,7 @@ const Navbar = () => {
               </Button>
             </>
           ) : (
+            // If the user is logged in, show Logout
             <Button color="inherit" onClick={handleLogout}>
               Logout
             </Button>
