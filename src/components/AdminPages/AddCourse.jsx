@@ -40,31 +40,28 @@ const AddCourse = () => {
       .then((res) => setEmployees(res.data))
       .catch((err) => console.error("Error fetching employees:", err));
   }, []); // Empty dependency array to run once on mount
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     // Find selected trainer's name based on the trainerId
-    const selectedTrainer = trainers.find(
-      (trainer) => trainer._id === trainerId
-    );
-
+    const selectedTrainer = trainers.find((trainer) => trainer._id === trainerId);
+  
+    if (!selectedTrainer) {
+      alert("Please select a valid trainer.");
+      return;
+    }
+  
     const courseData = {
       title,
       description,
-      trainer: {
-        trainer_id: trainerId,
-        trainer_name: selectedTrainer ? selectedTrainer.name : "",
-      },
+      trainer_id: trainerId, // Correct trainer_id field
+      trainer_name: selectedTrainer.name, // Correct trainer_name field
       employees: employeeIds, // Array of employee IDs
     };
-    console.log(courseData);
-
+  
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/courses",
-        courseData
-      );
+      const response = await axios.post("http://localhost:5000/api/courses", courseData);
       alert("Course added successfully");
       navigate("/dashboard"); // Redirect to dashboard or another page
     } catch (error) {
@@ -72,6 +69,8 @@ const AddCourse = () => {
       alert("Failed to add course");
     }
   };
+  
+  
 
   return (
     <Box
