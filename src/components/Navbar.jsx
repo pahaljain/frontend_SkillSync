@@ -12,12 +12,12 @@ const Navbar = () => {
 
   // Handle logout functionality
   const handleLogout = () => {
-    Cookie.remove("user"); // Remove the cookie and specify the path
+    Cookie.remove("user"); // Remove the cookie
     navigate("/login"); // Redirect to login
   };
 
-  // Check if user is logged in by checking the presence of a cookie
-  const user = Cookie.get("user");
+  // Get user from cookie
+  const user = Cookie.get("user") ? JSON.parse(Cookie.get("user")) : null;
 
   return (
     <AppBar position="static">
@@ -27,13 +27,13 @@ const Navbar = () => {
           component={Link}
           to="/"
           sx={{ flexGrow: 1 }}
-          style={{ textDecoration: 'none', color: 'white' }}
+          style={{ textDecoration: "none", color: "white" }}
         >
           SkillSync
         </Typography>
         <Box>
-          {/* Conditionally render "Add Course" if user is logged in */}
-          {user && (
+          {/* Conditionally render "Add Course" only for admin */}
+          {user && user.role === "Admin" && (
             <Button color="inherit" component={Link} to="/addCourse">
               Add Course
             </Button>

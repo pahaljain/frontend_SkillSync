@@ -1,17 +1,23 @@
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
 import "./App.css";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Navbar from "./components/Navbar";
 import Dashboard from "./components/Dashboard";
-import Cookie from 'js-cookie';
+import Cookie from "js-cookie";
 import AddCourse from "./components/AdminPages/AddCourse";
 import CourseDetail from "./components/AdminPages/CourseDetail";
-import PrivateRoute from './components/PrivateRoute'; // Import the PrivateRoute component
+import PrivateRoute from "./components/PrivateRoute"; // Import the PrivateRoute component
 
 function App() {
   const user = Cookie.get("user") ? JSON.parse(Cookie.get("user")) : null;
-
+  
   return (
     <Router>
       <Navbar />
