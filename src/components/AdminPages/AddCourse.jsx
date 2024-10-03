@@ -22,10 +22,9 @@ const AddCourse = () => {
   const [employeeIds, setEmployeeIds] = useState([]);
   const [trainers, setTrainers] = useState([]);
   const [employees, setEmployees] = useState([]);
-  
+
   const navigate = useNavigate();
 
-  // Fetch trainers and employees when component mounts
   useEffect(() => {
     // Fetch Trainers
     axios
@@ -42,43 +41,44 @@ const AddCourse = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    // Find selected trainer's name based on the trainerId
-    const selectedTrainer = trainers.find((trainer) => trainer._id === trainerId);
-  
+
+    const selectedTrainer = trainers.find(
+      (trainer) => trainer._id === trainerId
+    );
+
     if (!selectedTrainer) {
       alert("Please select a valid trainer.");
       return;
     }
-  
+
     const courseData = {
       title,
       description,
-      trainer: { // Wrap trainer details in a trainer object
-        trainer_id: trainerId, // Correct trainer_id field
-        trainer_name: selectedTrainer.name, // Correct trainer_name field
+      trainer: {
+        trainer_id: trainerId,
+        trainer_name: selectedTrainer.name,
       },
-      employees: employeeIds, // Array of employee IDs
+      employees: employeeIds,
     };
-    
-  
+
     try {
-      const response = await axios.post("http://localhost:5000/api/courses", courseData);
+      const response = await axios.post(
+        "http://localhost:5000/api/courses",
+        courseData
+      );
       alert("Course added successfully");
-      console.log(response.data.course._id);
-      
-      // Enroll each employee in the course
+      const courseId = response.data.course._id;
+
       for (const employeeId of employeeIds) {
-        await enrollEmployee(response.data.course._id, employeeId); // Use course ID returned from the course creation
+        await enrollEmployee(courseId, employeeId);
       }
-  
-      navigate("/dashboard"); // Redirect to dashboard or another page
+
+      navigate("/dashboard");
     } catch (error) {
       console.error("Error adding course:", error);
       alert("Failed to add course");
     }
   };
-  
 
   const enrollEmployee = async (courseId, employeeId) => {
     const enrollmentData = {
@@ -86,7 +86,12 @@ const AddCourse = () => {
       employee_id: employeeId,
     };
 
-    await axios.post("http://localhost:5000/api/enrollments", enrollmentData);
+    try {
+      await axios.post("http://localhost:5000/api/enrollments", enrollmentData);
+    } catch (error) {
+      console.error("Error enrolling employee:", error);
+      alert("Failed to enroll employee");
+    }
   };
 
   return (
@@ -118,7 +123,6 @@ const AddCourse = () => {
         required
         fullWidth
       />
-
       <TextField
         label="Description"
         variant="outlined"
