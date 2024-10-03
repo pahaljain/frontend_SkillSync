@@ -19,8 +19,8 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Grid,
 } from "@mui/material";
-import Cookie from "js-cookie";
 
 const CourseDetail = () => {
   const { id } = useParams();
@@ -39,15 +39,18 @@ const CourseDetail = () => {
           `http://localhost:5000/api/courses/${id}`
         );
         setCourse(courseResponse.data);
-        setEmployees(courseResponse.data.employees);
         
+        setEmployees(courseResponse.data.employees);
+
         // Fetch performance scores for enrolled employees
         const performanceResponses = await Promise.all(
           courseResponse.data.employees.map((employee) =>
-            axios.get(`http://localhost:5000/api/performance/get/${employee._id}`)
+            axios.get(
+              `http://localhost:5000/api/performance/get/${employee._id}`
+            )
           )
         );
-        
+
         const fetchedFeedback = {};
         const fetchedOverallScore = {};
 
@@ -138,6 +141,12 @@ const CourseDetail = () => {
             {course.title}
           </Typography>
           <Typography variant="body1">{course.description}</Typography>
+          <Typography variant="h6" sx={{ mt: 2 }}>
+            Trainer: {course.trainer.trainer_name}{" "}
+          </Typography>
+          <Typography variant="body2">
+            Total Enrolled Employees: {employees.length}{" "}
+          </Typography>
         </CardContent>
       </Card>
 
@@ -189,62 +198,103 @@ const CourseDetail = () => {
         </Table>
       </TableContainer>
 
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        maxWidth="sm"
+        className="border-radius-sm"
+        fullWidth
+      >
         <DialogTitle>Assign Scores to {selectedEmployee?.name}</DialogTitle>
         <DialogContent>
-          <TextField
-            type="number"
-            label="Punctuality"
-            value={feedback[selectedEmployee?._id]?.punctuality || ""}
-            onChange={(e) =>
-              handleFeedbackChange("punctuality", e.target.value)
-            }
-            inputProps={{ min: 0, max: 5, step: 1 }}
-            variant="outlined"
-            fullWidth
-          />
-          <TextField
-            type="number"
-            label="Hardworking"
-            value={feedback[selectedEmployee?._id]?.hardworking || ""}
-            onChange={(e) =>
-              handleFeedbackChange("hardworking", e.target.value)
-            }
-            inputProps={{ min: 0, max: 5, step: 1 }}
-            variant="outlined"
-            fullWidth
-          />
-          <TextField
-            type="number"
-            label="Assignment On Time"
-            value={feedback[selectedEmployee?._id]?.assignment_ontime || ""}
-            onChange={(e) =>
-              handleFeedbackChange("assignment_ontime", e.target.value)
-            }
-            inputProps={{ min: 0, max: 5, step: 1 }}
-            variant="outlined"
-            fullWidth
-          />
-          <TextField
-            type="number"
-            label="Communication Skills"
-            value={feedback[selectedEmployee?._id]?.communication_skills || ""}
-            onChange={(e) =>
-              handleFeedbackChange("communication_skills", e.target.value)
-            }
-            inputProps={{ min: 0, max: 5, step: 1 }}
-            variant="outlined"
-            fullWidth
-          />
-          <TextField
-            type="number"
-            label="Overall Score"
-            value={overallScore[selectedEmployee?._id] || ""}
-            onChange={(e) => handleOverallScoreChange(e.target.value)}
-            inputProps={{ min: 0, max: 10, step: 1 }}
-            variant="outlined"
-            fullWidth
-          />
+          <Typography variant="body2" sx={{ mb: 2 }}>
+            Please fill in the scores for the selected employee. Each score
+            should be between the specified range.
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <TextField
+                type="number"
+                label="Punctuality"
+                value={feedback[selectedEmployee?._id]?.punctuality || ""}
+                onChange={(e) =>
+                  handleFeedbackChange("punctuality", e.target.value)
+                }
+                inputProps={{ min: 0, max: 5, step: 1 }}
+                variant="outlined"
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                type="number"
+                label="Hardworking"
+                value={feedback[selectedEmployee?._id]?.hardworking || ""}
+                onChange={(e) =>
+                  handleFeedbackChange("hardworking", e.target.value)
+                }
+                inputProps={{ min: 0, max: 5, step: 1 }}
+                variant="outlined"
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                type="number"
+                label="Assignment On Time"
+                value={feedback[selectedEmployee?._id]?.assignment_ontime || ""}
+                onChange={(e) =>
+                  handleFeedbackChange("assignment_ontime", e.target.value)
+                }
+                inputProps={{ min: 0, max: 5, step: 1 }}
+                variant="outlined"
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                type="number"
+                label="Communication Skills"
+                value={
+                  feedback[selectedEmployee?._id]?.communication_skills || ""
+                }
+                onChange={(e) =>
+                  handleFeedbackChange("communication_skills", e.target.value)
+                }
+                inputProps={{ min: 0, max: 5, step: 1 }}
+                variant="outlined"
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                type="number"
+                label={<strong>Overall Score</strong>} // Bold label for emphasis
+                value={overallScore[selectedEmployee?._id] || ""}
+                onChange={(e) => handleOverallScoreChange(e.target.value)}
+                inputProps={{ min: 0, max: 10, step: 1 }}
+                variant="outlined"
+                fullWidth
+                sx={{
+                  bgcolor: "#f0f8ff", // Light background color
+                  borderRadius: "4px", // Rounded corners
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "#1976d2", // Custom border color
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#2196f3", // Border color on hover
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#1976d2", // Border color when focused
+                    },
+                  },
+                  width: "100%", // Full width of the parent container
+                  maxWidth: "600px", // Maximum width to control size
+                }}
+              />
+            </Grid>
+          </Grid>
           {message && (
             <Typography variant="body1" color="primary" sx={{ mt: 2 }}>
               {message}

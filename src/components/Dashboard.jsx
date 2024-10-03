@@ -6,14 +6,14 @@ import {
   Grid,
   Card,
   CardContent,
-  Button,
+  Container,
 } from "@mui/material";
 import axios from "axios";
 import Cookie from "js-cookie";
 
 const Dashboard = () => {
   const [courses, setCourses] = useState([]);
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   const user = Cookie.get("user") ? JSON.parse(Cookie.get("user")) : null;
 
   useEffect(() => {
@@ -24,10 +24,8 @@ const Dashboard = () => {
         try {
           let response;
           if (user.role === "Admin") {
-            // Admin fetches all courses
             response = await axios.get("http://localhost:5000/api/courses");
           } else if (user.role === "Trainer") {
-            // Trainer fetches only their assigned courses
             response = await axios.get(
               `http://localhost:5000/api/courses/trainer/${user.user_id}`
             );
@@ -39,18 +37,20 @@ const Dashboard = () => {
       };
       fetchCourses();
     }
-  }, [navigate]);
+  }, [navigate, user]);
 
   const handleCourseClick = (id) => {
-    navigate(`/course/${id}`); // Navigate to course detail page
+    navigate(`/course/${id}`);
   };
 
   return (
-    <div>
-      <h1 className="text-blue-500 text-2xl">
+    <Container sx={{ mt: 4, maxWidth: "1200px" }}>
+      {" "}
+      {/* Adjust maxWidth here */}
+      <Typography variant="h4" gutterBottom align="center">
         Welcome, {user ? user.name : "Guest"}!
-      </h1>
-      <Typography variant="h6" gutterBottom>
+      </Typography>
+      <Typography variant="h6" gutterBottom align="center">
         {user.role === "Admin" ? "All Courses" : "Your Courses"}
       </Typography>
       <Grid container spacing={2}>
@@ -58,10 +58,18 @@ const Dashboard = () => {
           <Grid item key={course._id} xs={12} sm={6} md={4}>
             <Card
               onClick={() => handleCourseClick(course._id)}
-              style={{ cursor: "pointer" }}
+              sx={{
+                cursor: "pointer",
+                transition: "0.3s",
+                "&:hover": {
+                  boxShadow: 20,
+                },
+              }}
             >
               <CardContent>
-                <Typography variant="h6">{course.title}</Typography>
+                <Typography variant="h6" gutterBottom>
+                  {course.title}
+                </Typography>
                 <Typography variant="body2" color="textSecondary">
                   {course.description}
                 </Typography>
@@ -70,7 +78,7 @@ const Dashboard = () => {
           </Grid>
         ))}
       </Grid>
-    </div>
+    </Container>
   );
 };
 

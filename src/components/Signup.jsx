@@ -32,11 +32,10 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
-        
       const response = await axios.post(
-        " http://localhost:5000/api/users/signup",
+        "http://localhost:5000/api/users/signup",
         formData
       );
       console.log("Signup successful:", response.data);
@@ -47,8 +46,16 @@ const Signup = () => {
   };
 
   return (
-    <Container>
-      <Box mt={5}>
+    <Container maxWidth="sm">
+      <Box
+        mt={5}
+        sx={{
+          padding: 3,
+          borderRadius: 2,
+          boxShadow: 3,
+          backgroundColor: "#fff",
+        }}
+      >
         <Typography variant="h4" gutterBottom>
           Signup
         </Typography>

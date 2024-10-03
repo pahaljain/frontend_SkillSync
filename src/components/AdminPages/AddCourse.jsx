@@ -11,6 +11,7 @@ import {
   OutlinedInput,
   Checkbox,
   ListItemText,
+  FormControlLabel,
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -94,6 +95,17 @@ const AddCourse = () => {
     }
   };
 
+  const handleSelectAll = (event) => {
+    if (event.target.checked) {
+      const allEmployeeIds = employees.map((emp) => emp._id);
+      setEmployeeIds(allEmployeeIds);
+    } else {
+      setEmployeeIds([]);
+    }
+  };
+
+  const isAllSelected = employeeIds.length === employees.length;
+
   return (
     <Box
       component="form"
@@ -166,6 +178,14 @@ const AddCourse = () => {
               .join(", ")
           }
         >
+          <MenuItem>
+            <FormControlLabel
+              control={
+                <Checkbox checked={isAllSelected} onChange={handleSelectAll} />
+              }
+              label="Select All"
+            />
+          </MenuItem>
           {employees.map((employee) => (
             <MenuItem key={employee._id} value={employee._id}>
               <Checkbox checked={employeeIds.indexOf(employee._id) > -1} />

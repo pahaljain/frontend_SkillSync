@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { TextField, Button, Box, Typography, Container } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import Cookie from 'js-cookie'; // Import js-cookie
+import Cookie from "js-cookie";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -11,7 +11,6 @@ const Login = () => {
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const user = Cookie.get("user") ? JSON.parse(Cookie.get("user")) : null;
 
   const handleChange = (e) => {
     setFormData({
@@ -24,23 +23,31 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/users/login", // Ensure the URL is correct
+        "http://localhost:5000/api/users/login",
         formData
       );
 
-      const user = response.data; // Get user data from the response
+      const user = response.data;
 
       // Set a cookie with user information
-      Cookie.set("user", JSON.stringify(user), { expires: 7 }); // Expires in 7 days
-      navigate("/dashboard"); // Redirect to dashboard after login
+      Cookie.set("user", JSON.stringify(user), { expires: 7 });
+      navigate("/dashboard");
     } catch (error) {
       setError(error.response.data.message || "Login failed");
     }
   };
 
   return (
-    <Container>
-      <Box mt={5}>
+    <Container maxWidth="sm">
+      <Box
+        mt={5}
+        sx={{
+          padding: 3,
+          borderRadius: 2,
+          boxShadow: 3,
+          backgroundColor: "#fff",
+        }}
+      >
         <Typography variant="h4" gutterBottom>
           Login
         </Typography>
