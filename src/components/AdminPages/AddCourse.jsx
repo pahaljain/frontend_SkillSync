@@ -113,14 +113,14 @@ const AddCourse = () => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        gap: 2,
+        gap: 3,
         width: "100%",
         maxWidth: 600,
         margin: "auto",
         padding: 4,
         boxShadow: 3,
         borderRadius: 2,
-        backgroundColor: "#f9f9f9",
+        backgroundColor: "#fff",
       }}
     >
       <Typography variant="h5" gutterBottom>
@@ -134,7 +134,9 @@ const AddCourse = () => {
         onChange={(e) => setTitle(e.target.value)}
         required
         fullWidth
+        sx={{ bgcolor: "#f5f5f5" }} // Light background for input
       />
+
       <TextField
         label="Description"
         variant="outlined"
@@ -144,6 +146,7 @@ const AddCourse = () => {
         rows={4}
         required
         fullWidth
+        sx={{ bgcolor: "#f5f5f5" }} // Light background for input
       />
 
       <FormControl fullWidth required>
@@ -152,6 +155,7 @@ const AddCourse = () => {
           value={trainerId}
           onChange={(e) => setTrainerId(e.target.value)}
           label="Select Trainer"
+          sx={{ bgcolor: "#f5f5f5" }} // Light background for input
         >
           <MenuItem value="">
             <em>Choose a trainer</em>
@@ -177,6 +181,7 @@ const AddCourse = () => {
               .map((emp) => emp.name)
               .join(", ")
           }
+          sx={{ bgcolor: "#f5f5f5" }} // Light background for input
         >
           <MenuItem>
             <FormControlLabel

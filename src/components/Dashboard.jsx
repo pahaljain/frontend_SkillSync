@@ -12,7 +12,9 @@ import axios from "axios";
 import Cookie from "js-cookie";
 
 const Dashboard = () => {
-  const [courses, setCourses] = useState([]);
+  const [totalEmployees, setTotalEmployees] = useState(0);
+  const [totalTrainers, setTotalTrainers] = useState(0);
+  const [totalCourses, setTotalCourses] = useState(0);
   const navigate = useNavigate();
   const user = Cookie.get("user") ? JSON.parse(Cookie.get("user")) : null;
 
@@ -20,63 +22,71 @@ const Dashboard = () => {
     if (!user) {
       navigate("/login");
     } else {
-      const fetchCourses = async () => {
+      const fetchDashboardData = async () => {
         try {
-          let response;
-          if (user.role === "Admin") {
-            response = await axios.get("http://localhost:5000/api/courses");
-          } else if (user.role === "Trainer") {
-            response = await axios.get(
-              `http://localhost:5000/api/courses/trainer/${user.user_id}`
-            );
-          }
-          setCourses(response.data);
+          const employeeResponse = await axios.get(
+            "http://localhost:5000/api/employees"
+          );
+          const trainerResponse = await axios.get(
+            "http://localhost:5000/api/users"
+          );
+          const courseResponse = await axios.get(
+            "http://localhost:5000/api/courses"
+          );
+
+          setTotalEmployees(employeeResponse.data.length);
+          setTotalTrainers(trainerResponse.data.length);
+          setTotalCourses(courseResponse.data.length);
         } catch (error) {
-          console.error("Error fetching courses:", error);
+          console.error("Error fetching dashboard data:", error);
         }
       };
-      fetchCourses();
+      fetchDashboardData();
     }
   }, [navigate, user]);
 
-  const handleCourseClick = (id) => {
-    navigate(`/course/${id}`);
-  };
-
   return (
     <Container sx={{ mt: 4, maxWidth: "1200px" }}>
-      {" "}
-      {/* Adjust maxWidth here */}
       <Typography variant="h4" gutterBottom align="center">
-        Welcome, {user ? user.name : "Guest"}!
+        {user ? user.role : "Guest"} Dashboard
       </Typography>
-      <Typography variant="h6" gutterBottom align="center">
-        {user.role === "Admin" ? "All Courses" : "Your Courses"}
-      </Typography>
-      <Grid container spacing={2}>
-        {courses.map((course) => (
-          <Grid item key={course._id} xs={12} sm={6} md={4}>
-            <Card
-              onClick={() => handleCourseClick(course._id)}
-              sx={{
-                cursor: "pointer",
-                transition: "0.3s",
-                "&:hover": {
-                  boxShadow: 20,
-                },
-              }}
-            >
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  {course.title}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {course.description}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
+      <Grid container spacing={2} sx={{ mb: 4 }}>
+        <Grid item xs={12} sm={4}>
+          <Card>
+            <CardContent>
+              <Typography variant="h5" align="center">
+                Total Employees
+              </Typography>
+              <Typography variant="h6" align="center">
+                {totalEmployees}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <Card>
+            <CardContent>
+              <Typography variant="h5" align="center">
+                Total Trainers
+              </Typography>
+              <Typography variant="h6" align="center">
+                {totalTrainers}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <Card>
+            <CardContent>
+              <Typography variant="h5" align="center">
+                Total Courses
+              </Typography>
+              <Typography variant="h6" align="center">
+                {totalCourses}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
       </Grid>
     </Container>
   );

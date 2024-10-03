@@ -32,14 +32,16 @@ const Navbar = () => {
           SkillSync
         </Typography>
         <Box>
-          {/* Conditionally render "Add Course" only for admin */}
-          {user && user.role === "Admin" && (
-            <Button color="inherit" component={Link} to="/addCourse">
-              Add Course
-            </Button>
-          )}
+          <Button color="inherit" component={Link} to="/courses">
+            Courses
+          </Button>
+          <Button color="inherit" component={Link} to="/employees">
+            Employees
+          </Button>
+          <Button color="inherit" component={Link} to="/trainers">
+            Trainers
+          </Button>
 
-          {/* If the user is not logged in, show Login and Signup */}
           {!user ? (
             <>
               <Button color="inherit" component={Link} to="/login">
@@ -50,7 +52,6 @@ const Navbar = () => {
               </Button>
             </>
           ) : (
-            // If the user is logged in, show Logout
             <Button color="inherit" onClick={handleLogout}>
               Logout
             </Button>

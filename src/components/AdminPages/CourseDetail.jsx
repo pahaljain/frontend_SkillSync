@@ -3,16 +3,14 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import {
   Typography,
-  Card,
-  CardContent,
   Box,
+  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
   TextField,
   Button,
   Dialog,
@@ -39,10 +37,8 @@ const CourseDetail = () => {
           `http://localhost:5000/api/courses/${id}`
         );
         setCourse(courseResponse.data);
-        
         setEmployees(courseResponse.data.employees);
 
-        // Fetch performance scores for enrolled employees
         const performanceResponses = await Promise.all(
           courseResponse.data.employees.map((employee) =>
             axios.get(
@@ -122,7 +118,7 @@ const CourseDetail = () => {
       });
 
       setMessage("Score assigned successfully");
-      handleClose(); // Close the dialog after submission
+      handleClose();
     } catch (error) {
       console.error("Error assigning score:", error);
       setMessage("Failed to assign score");
@@ -135,21 +131,35 @@ const CourseDetail = () => {
 
   return (
     <Box m={3}>
-      <Card variant="outlined" sx={{ mb: 2 }}>
-        <CardContent>
-          <Typography variant="h4" gutterBottom>
-            {course.title}
-          </Typography>
-          <Typography variant="body1">{course.description}</Typography>
-          <Typography variant="h6" sx={{ mt: 2 }}>
-            Trainer: {course.trainer.trainer_name}{" "}
-          </Typography>
-          <Typography variant="body2">
-            Total Enrolled Employees: {employees.length}{" "}
-          </Typography>
-        </CardContent>
-      </Card>
+      {/* Title Section */}
+      <Typography variant="h4" gutterBottom>
+        {course.title}
+      </Typography>
 
+      {/* Description Section */}
+      <Typography variant="body1" paragraph>
+        {course.description}
+      </Typography>
+
+      {/* Small Cards for Trainer and Total Employees */}
+      <Grid container spacing={2} sx={{ mb: 3 }}>
+        <Grid item xs={12} md={6}>
+          <Paper elevation={2} sx={{ padding: 2, bgcolor: "#eee" }}>
+            <Typography variant="h6">
+              Trainer: {course.trainer.trainer_name}
+            </Typography>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Paper elevation={2} sx={{ padding: 2, bgcolor: "#eee" }}>
+            <Typography variant="h6">
+              Total Enrolled Employees: {employees.length}
+            </Typography>
+          </Paper>
+        </Grid>
+      </Grid>
+
+      {/* Employees Table */}
       <Typography variant="h6" sx={{ mb: 2 }}>
         Employees Enrolled
       </Typography>
@@ -198,13 +208,8 @@ const CourseDetail = () => {
         </Table>
       </TableContainer>
 
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        maxWidth="sm"
-        className="border-radius-sm"
-        fullWidth
-      >
+      {/* Dialog for Assigning Scores */}
+      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle>Assign Scores to {selectedEmployee?.name}</DialogTitle>
         <DialogContent>
           <Typography variant="body2" sx={{ mb: 2 }}>
@@ -269,29 +274,12 @@ const CourseDetail = () => {
             <Grid item xs={6}>
               <TextField
                 type="number"
-                label={<strong>Overall Score</strong>} // Bold label for emphasis
+                label={<strong>Overall Score</strong>}
                 value={overallScore[selectedEmployee?._id] || ""}
                 onChange={(e) => handleOverallScoreChange(e.target.value)}
                 inputProps={{ min: 0, max: 10, step: 1 }}
                 variant="outlined"
                 fullWidth
-                sx={{
-                  bgcolor: "#f0f8ff", // Light background color
-                  borderRadius: "4px", // Rounded corners
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: "#1976d2", // Custom border color
-                    },
-                    "&:hover fieldset": {
-                      borderColor: "#2196f3", // Border color on hover
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "#1976d2", // Border color when focused
-                    },
-                  },
-                  width: "100%", // Full width of the parent container
-                  maxWidth: "600px", // Maximum width to control size
-                }}
               />
             </Grid>
           </Grid>
