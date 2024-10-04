@@ -5,11 +5,15 @@ import { useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
-  Grid,
-  Card,
-  CardContent,
   Container,
   Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
 } from "@mui/material";
 import axios from "axios";
 import Cookie from "js-cookie";
@@ -62,31 +66,35 @@ const Courses = () => {
           </Button>
         </Box>
       )}
-      <Grid container spacing={2}>
-        {courses.map((course) => (
-          <Grid item key={course._id} xs={12} sm={6} md={4}>
-            <Card
-              onClick={() => handleCourseClick(course._id)}
-              sx={{
-                cursor: "pointer",
-                transition: "0.3s",
-                "&:hover": {
-                  boxShadow: 20,
-                },
-              }}
-            >
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  {course.title}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {course.description}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+      <TableContainer
+        component={Paper}
+        sx={{ border: "1px solid #ccc", mt: 2 }}
+      >
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Title</TableCell>
+              <TableCell>Description</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {courses.map((course, index) => (
+              <TableRow
+                key={course._id}
+                onClick={() => handleCourseClick(course._id)}
+                sx={{
+                  cursor: "pointer",
+                  backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#e0e0e0", // Alternating background colors
+                  "&:hover": { backgroundColor: "#d3d3d3" }, // Hover color
+                }}
+              >
+                <TableCell>{course.title}</TableCell>
+                <TableCell>{course.description}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Container>
   );
 };
