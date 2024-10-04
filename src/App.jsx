@@ -6,16 +6,15 @@ import {
 } from "react-router-dom";
 import "./App.css";
 import Login from "./components/Login";
-import Signup from "./components/Signup";
 import Navbar from "./components/Navbar";
 import Dashboard from "./components/Dashboard";
 import Cookie from "js-cookie";
 import AddCourse from "./components/AdminPages/AddCourse";
 import CourseDetail from "./components/AdminPages/CourseDetail";
 import PrivateRoute from "./components/PrivateRoute";
-import Courses from "./components/AdminPages/Courses"; // Import the Courses component
-import Employees from "./components/AdminPages/Employees"; // Import the Employees component
-import Trainers from "./components/AdminPages/Trainer"; // Import the Trainers component
+import Courses from "./components/AdminPages/Courses";
+import Employees from "./components/AdminPages/Employees";
+import Trainers from "./components/AdminPages/Trainer";
 
 function App() {
   const user = Cookie.get("user") ? JSON.parse(Cookie.get("user")) : null;
@@ -32,10 +31,6 @@ function App() {
         <Route
           path="/login"
           element={user ? <Navigate to="/dashboard" /> : <Login />}
-        />
-        <Route
-          path="/signup"
-          element={user ? <Navigate to="/dashboard" /> : <Signup />}
         />
 
         {/* Protected Routes */}
@@ -55,14 +50,7 @@ function App() {
             </PrivateRoute>
           }
         />
-        <Route
-          path="/course/:id"
-          element={
-            <PrivateRoute>
-              <CourseDetail />
-            </PrivateRoute>
-          }
-        />
+        <Route path="/course/:id" element={<CourseDetail />} />
         <Route
           path="/courses"
           element={

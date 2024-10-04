@@ -1,5 +1,3 @@
-// src/components/Navbar.jsx
-
 import React from "react";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -11,7 +9,7 @@ import Cookie from "js-cookie";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const location = useLocation(); // Get the current location
+  const location = useLocation();
 
   // Handle logout functionality
   const handleLogout = () => {
@@ -51,14 +49,15 @@ const Navbar = () => {
               >
                 Login
               </Button>
-              <Button
+              {/* Uncomment if Signup is needed */}
+              {/* <Button
                 color="inherit"
                 component={Link}
                 to="/signup"
                 sx={location.pathname === "/signup" ? activeStyle : {}}
               >
                 Signup
-              </Button>
+              </Button> */}
             </>
           ) : (
             <>
@@ -70,22 +69,27 @@ const Navbar = () => {
               >
                 Courses
               </Button>
-              <Button
-                color="inherit"
-                component={Link}
-                to="/employees"
-                sx={location.pathname === "/employees" ? activeStyle : {}}
-              >
-                Employees
-              </Button>
-              <Button
-                color="inherit"
-                component={Link}
-                to="/trainers"
-                sx={location.pathname === "/trainers" ? activeStyle : {}}
-              >
-                Trainers
-              </Button>
+              {/* Show admin-specific buttons */}
+              {user.role === "Admin" && (
+                <>
+                  <Button
+                    color="inherit"
+                    component={Link}
+                    to="/employees"
+                    sx={location.pathname === "/employees" ? activeStyle : {}}
+                  >
+                    Employees
+                  </Button>
+                  <Button
+                    color="inherit"
+                    component={Link}
+                    to="/trainers"
+                    sx={location.pathname === "/trainers" ? activeStyle : {}}
+                  >
+                    Trainers
+                  </Button>
+                </>
+              )}
               <Button color="inherit" onClick={handleLogout}>
                 Logout
               </Button>

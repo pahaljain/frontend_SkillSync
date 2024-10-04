@@ -44,7 +44,7 @@ const Courses = () => {
       };
       fetchCourses();
     }
-  }, [navigate, user]);
+  }, [navigate]);
 
   const handleCourseClick = (id) => {
     navigate(`/course/${id}`);
