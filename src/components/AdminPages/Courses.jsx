@@ -1,5 +1,3 @@
-// src/components/Courses.jsx
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -10,11 +8,22 @@ import {
   Grid,
   Card,
   CardContent,
+  CardMedia,
 } from "@mui/material";
 import axios from "axios";
 import Cookie from "js-cookie";
-import { ToastContainer, toast } from "react-toastify"; // Import ToastContainer and toast
-import "react-toastify/dist/ReactToastify.css"; // Import the CSS for toast notifications
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+// Import images
+import course1 from "../../assets/images/courses1.webp";
+import course2 from "../../assets/images/courses2.webp";
+import course3 from "../../assets/images/courses3.webp";
+import course4 from "../../assets/images/courses4.webp";
+import course5 from "../../assets/images/courses5.webp";
+import course6 from "../../assets/images/courses6.webp";
+
+const courseImages = [course1, course2, course3, course4, course5, course6];
 
 const Courses = () => {
   const [courses, setCourses] = useState([]);
@@ -49,7 +58,7 @@ const Courses = () => {
   };
 
   const handleAddCourse = async () => {
-    toast.success("Course added successfully!"); // Show success toast
+    toast.success("Course added successfully!");
     navigate("/addCourse");
   };
 
@@ -72,21 +81,28 @@ const Courses = () => {
         </Box>
       )}
       <Grid container spacing={2}>
-        {courses.map((course) => (
+        {courses.map((course, index) => (
           <Grid item xs={12} sm={6} md={4} key={course._id}>
             <Card
               sx={{
-                backgroundColor: "#3411A3", // Primary color for the card background
-                color: "white", // White text
+                backgroundColor: "#3411A3",
+                color: "white",
                 cursor: "pointer",
                 "&:hover": {
-                  backgroundColor: "#4e1eac", // Slightly lighter on hover
+                  backgroundColor: "#4e1eac",
                 },
                 borderRadius: 2,
                 boxShadow: 3,
               }}
               onClick={() => handleCourseClick(course._id)}
             >
+              {/* Display image above the title */}
+              <CardMedia
+                component="img"
+                height="140"
+                image={courseImages[index % courseImages.length]} // Cycle through images
+                alt={course.title}
+              />
               <CardContent>
                 <Typography variant="h5" sx={{ textTransform: "uppercase" }}>
                   {course.title}
@@ -97,7 +113,7 @@ const Courses = () => {
           </Grid>
         ))}
       </Grid>
-      <ToastContainer /> {/* Add ToastContainer to render toasts */}
+      <ToastContainer />
     </Container>
   );
 };

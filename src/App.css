@@ -1,0 +1,7 @@
+.login-form{
+    width:100% !important;
+    display: flex;
+    justify-content: center;
+    background-color: #3411A3;
+    align-items: center;
+}
