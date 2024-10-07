@@ -26,11 +26,15 @@ function App() {
         {/* Redirect to login if not logged in on root route */}
         <Route
           path="/"
-          element={<Navigate to={user ? "/dashboard" : "/login"} />}
+          element={
+            <Navigate to={user ? "/dashboard" : "/login"} />
+          }
         />
         <Route
           path="/login"
-          element={user ? <Navigate to="/dashboard" /> : <Login />}
+          element={
+            Cookie.get("user") ? <Navigate to="/dashboard" /> : <Login />
+          }
         />
 
         {/* Protected Routes */}
