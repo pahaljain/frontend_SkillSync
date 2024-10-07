@@ -49,14 +49,43 @@ const Dashboard = () => {
           setTotalEmployees(employeeResponse.data.length);
           setTotalTrainers(trainerResponse.data.length);
           setTotalCourses(courseResponse.data.length);
-          setPerformanceData(performanceResponse.data);
+
+          // Process performance data to aggregate scores
+          const aggregatedPerformanceData = performanceResponse.data.reduce(
+            (acc, current) => {
+              const employeeId = current.employee._id;
+
+              if (!acc[employeeId]) {
+                acc[employeeId] = {
+                  employee: current.employee,
+                  totalScore: 0,
+                  count: 0,
+                };
+              }
+              acc[employeeId].totalScore += current.overall_score;
+              acc[employeeId].count += 1;
+
+              return acc;
+            },
+            {}
+          );
+
+          // Convert the aggregated data into an array
+          const performanceArray = Object.values(aggregatedPerformanceData).map(
+            (entry) => ({
+              ...entry.employee,
+              overall_score: (entry.totalScore / entry.count).toFixed(2), // Average score
+            })
+          );
+
+          setPerformanceData(performanceArray);
         } catch (error) {
           console.error("Error fetching dashboard data:", error);
         }
       };
       fetchDashboardData();
     }
-  }, [navigate]); // Adding 'user' as a dependency
+  }, [navigate]);
 
   const topPerformers = [...performanceData]
     .sort((a, b) => b.overall_score - a.overall_score)
@@ -145,7 +174,7 @@ const Dashboard = () => {
           margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="employee.name" />
+          <XAxis dataKey="name" /> {/* Changed to employee name */}
           <YAxis />
           <Tooltip />
           <Bar dataKey="overall_score" fill="#F25F95" />
@@ -166,7 +195,7 @@ const Dashboard = () => {
           margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="employee.name" />
+          <XAxis dataKey="name" /> {/* Changed to employee name */}
           <YAxis />
           <Tooltip />
           <Bar dataKey="overall_score" fill="#F25F95" />

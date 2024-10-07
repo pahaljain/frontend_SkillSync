@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   Typography,
   Box,
@@ -43,7 +45,7 @@ const CourseDetail = () => {
         const performanceResponses = await Promise.all(
           courseResponse.data.employees.map((employee) =>
             axios.get(
-              `http://localhost:5000/api/performance/get/${employee._id}`
+              `http://localhost:5000/api/performance/get/${employee._id}/${id}` // Pass both employee ID and course ID
             )
           )
         );
@@ -76,6 +78,7 @@ const CourseDetail = () => {
         console.error("Error fetching course details:", error);
       }
     };
+
     fetchCourse();
   }, [id]);
 
@@ -128,11 +131,13 @@ const CourseDetail = () => {
         overall_score: overallScore[selectedEmployee._id],
       });
 
-      setMessage("Score assigned successfully");
+      // Show success notification
+      toast.success("Score assigned successfully", { autoClose: 3000 });
       handleClose();
     } catch (error) {
       console.error("Error assigning score:", error);
-      setMessage("Failed to assign score");
+      // Show error notification
+      toast.error("Failed to assign score", { autoClose: 3000 });
     }
   };
 
@@ -311,6 +316,7 @@ const CourseDetail = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <ToastContainer />
     </Box>
   );
 };

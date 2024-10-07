@@ -1,5 +1,3 @@
-// src/components/Employees.jsx
-
 import React, { useEffect, useState } from "react";
 import {
   Typography,
@@ -42,12 +40,11 @@ const Employees = () => {
   }, [open]);
 
   const handleAddEmployeeClick = () => {
-    setOpen(true); // Open the dialog
+    setOpen(true);
   };
 
   const handleClose = () => {
-    setOpen(false); // Close the dialog
-    // Clear the form fields
+    setOpen(false);
     setName("");
     setEmail("");
   };
@@ -59,29 +56,43 @@ const Employees = () => {
         name,
         email,
       });
-      setEmployees([...employees, response.data]); // Add the new employee to the list
-      toast.success("Employee added successfully!"); // Show success toast
-      handleClose(); // Close the dialog
+      setEmployees([...employees, response.data]);
+      toast.success("Employee added successfully!");
+      handleClose();
     } catch (error) {
       console.error("Error adding employee:", error);
-      toast.error("Error adding employee. Please try again."); // Show error toast
+      toast.error("Error adding employee. Please try again.");
     }
   };
 
   const handleRemoveEmployee = async (id) => {
     try {
       await axios.delete(`http://localhost:5000/api/employees/${id}`);
-      setEmployees(employees.filter((employee) => employee._id !== id)); // Remove employee from the list
-      toast.success("Employee removed successfully!"); // Show success toast
+      setEmployees(employees.filter((employee) => employee._id !== id));
+      toast.success("Employee removed successfully!");
     } catch (error) {
       console.error("Error removing employee:", error);
-      toast.error("Error removing employee. Please try again."); // Show error toast
+      toast.error("Error removing employee. Please try again.");
     }
   };
 
   return (
-    <Container sx={{ mt: 4, maxWidth: "1200px" }}>
-      <Typography variant="h4" gutterBottom align="center">
+    <Container
+      sx={{
+        mt: 4,
+        maxWidth: "1200px",
+        backgroundColor: "#fafafa",
+        borderRadius: 2,
+        boxShadow: 3,
+      }}
+    >
+      <Typography
+        variant="h4"
+        gutterBottom
+        align="center"
+        color="#3411A3"
+        sx={{ textTransform: "uppercase" }}
+      >
         Employees
       </Typography>
       <Box mb={2} display="flex" justifyContent="flex-end">
@@ -89,20 +100,47 @@ const Employees = () => {
           variant="contained"
           color="primary"
           onClick={handleAddEmployeeClick}
+          sx={{
+            "&:hover": { backgroundColor: "#250d73" }, // Darker shade for hover
+          }}
         >
           Add Employee
         </Button>
       </Box>
       <TableContainer
         component={Paper}
-        sx={{ border: "1px solid #ccc", mt: 2, backgroundColor: "#eee" }}
+        sx={{ border: "1px solid #ccc", mt: 2, backgroundColor: "#ffffff" }}
       >
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Actions</TableCell> 
+              <TableCell
+                sx={{
+                  fontWeight: "bold",
+                  backgroundColor: "#3411A3", // Primary color
+                  color: "#fff", // White text color
+                }}
+              >
+                Name
+              </TableCell>
+              <TableCell
+                sx={{
+                  fontWeight: "bold",
+                  backgroundColor: "#3411A3", // Primary color
+                  color: "#fff", // White text color
+                }}
+              >
+                Email
+              </TableCell>
+              <TableCell
+                sx={{
+                  fontWeight: "bold",
+                  backgroundColor: "#3411A3", // Primary color
+                  color: "#fff", // White text color
+                }}
+              >
+                Actions
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -110,8 +148,8 @@ const Employees = () => {
               <TableRow
                 key={index}
                 sx={{
-                  backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#e0e0e0", // Alternating background colors
-                  "&:hover": { backgroundColor: "#d3d3d3" }, // Hover color
+                  backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#f2f2f2",
+                  "&:hover": { backgroundColor: "#d3d3d3" },
                 }}
               >
                 <TableCell>{employee.name}</TableCell>
@@ -119,8 +157,12 @@ const Employees = () => {
                 <TableCell>
                   <Button
                     variant="contained"
-                    color="primary"
-                    onClick={() => handleRemoveEmployee(employee._id)} // Call remove function
+                    sx={{
+                      backgroundColor: "#F25F95", // Set to your specified color
+                      color: "#fff", // White text color
+                      "&:hover": { backgroundColor: "#d84b7a" }, // Darker shade for hover
+                    }}
+                    onClick={() => handleRemoveEmployee(employee._id)}
                   >
                     Remove
                   </Button>

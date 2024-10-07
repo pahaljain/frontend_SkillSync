@@ -1,5 +1,3 @@
-// src/components/Trainers.jsx
-
 import React, { useEffect, useState } from "react";
 import {
   Typography,
@@ -20,8 +18,8 @@ import {
   DialogActions,
 } from "@mui/material";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify"; // Import Toastify components
-import "react-toastify/dist/ReactToastify.css"; // Import CSS for Toastify
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Trainers = () => {
   const [trainers, setTrainers] = useState([]);
@@ -43,11 +41,11 @@ const Trainers = () => {
   }, []);
 
   const handleAddTrainerClick = () => {
-    setOpen(true); // Open the dialog
+    setOpen(true);
   };
 
   const handleClose = () => {
-    setOpen(false); // Close the dialog
+    setOpen(false);
   };
 
   const handleSignup = async (e) => {
@@ -59,31 +57,48 @@ const Trainers = () => {
           name,
           email,
           password,
-          role: "Trainer", // Assuming role is Trainer for this form
+          role: "Trainer",
         }
       );
-      setTrainers([...trainers, response.data]); // Add the new trainer to the list
-      toast.success("Trainer added successfully!"); // Show success toast
-      handleClose(); // Close the dialog
-      // Clear the form fields
+      setTrainers([...trainers, response.data]);
+      toast.success("Trainer added successfully!");
+      handleClose();
       setName("");
       setEmail("");
       setPassword("");
     } catch (error) {
       console.error("Error during signup:", error);
-      toast.error("Error adding trainer. Please try again."); // Show error toast
+      toast.error("Error adding trainer. Please try again.");
     }
   };
 
   return (
-    <Container sx={{ mt: 4, maxWidth: "1200px" }}>
-      <Typography variant="h4" gutterBottom align="center">
+    <Container
+      sx={{
+        mt: 4,
+        maxWidth: "1200px",
+        backgroundColor: "#fafafa",
+        borderRadius: 2,
+        boxShadow: 3,
+      }}
+    >
+      <Typography
+        variant="h4"
+        gutterBottom
+        align="center"
+        color="#3411A3"
+        sx={{ textTransform: "uppercase" }}
+      >
         Trainers
       </Typography>
       <Box mb={2} display="flex" justifyContent="flex-end">
         <Button
           variant="contained"
-          color="primary"
+          sx={{
+            backgroundColor: "#3411A3",
+            color: "#fff",
+            "&:hover": { backgroundColor: "#250d73" },
+          }}
           onClick={handleAddTrainerClick}
         >
           Add Trainer
@@ -91,13 +106,29 @@ const Trainers = () => {
       </Box>
       <TableContainer
         component={Paper}
-        sx={{ border: "1px solid #ccc", mt: 2 }}
+        sx={{ border: "1px solid #ccc", mt: 2, backgroundColor: "#ffffff" }}
       >
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
+              <TableCell
+                sx={{
+                  fontWeight: "bold",
+                  backgroundColor: "#3411A3",
+                  color: "#fff",
+                }}
+              >
+                Name
+              </TableCell>
+              <TableCell
+                sx={{
+                  fontWeight: "bold",
+                  backgroundColor: "#3411A3",
+                  color: "#fff",
+                }}
+              >
+                Email
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -105,7 +136,7 @@ const Trainers = () => {
               <TableRow
                 key={trainer._id}
                 sx={{
-                  backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#e0e0e0",
+                  backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#f2f2f2",
                   "&:hover": { backgroundColor: "#d3d3d3" },
                 }}
               >
@@ -149,10 +180,10 @@ const Trainers = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={handleClose} sx={{ color: "#3411A3" }}>
             Cancel
           </Button>
-          <Button onClick={handleSignup} color="primary">
+          <Button onClick={handleSignup} sx={{ color: "#3411A3" }}>
             Register
           </Button>
         </DialogActions>
