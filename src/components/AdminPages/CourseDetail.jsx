@@ -39,6 +39,7 @@ const CourseDetail = () => {
         setCourse(courseResponse.data);
         setEmployees(courseResponse.data.employees);
 
+        // Fetch performance data
         const performanceResponses = await Promise.all(
           courseResponse.data.employees.map((employee) =>
             axios.get(
@@ -51,11 +52,21 @@ const CourseDetail = () => {
         const fetchedOverallScore = {};
 
         performanceResponses.forEach((res) => {
-          const enrollment = res.data;
-          if (enrollment.feedback) {
-            fetchedFeedback[enrollment.employee_id] = enrollment.feedback;
-            fetchedOverallScore[enrollment.employee_id] =
-              enrollment.overall_score;
+          if (res && res.data) {
+            const enrollment = res.data;
+
+            // Now accessing enrollment.employee._id
+            if (enrollment.employee && enrollment.employee._id) {
+              if (enrollment.feedback) {
+                fetchedFeedback[enrollment.employee._id] = enrollment.feedback;
+                fetchedOverallScore[enrollment.employee._id] =
+                  enrollment.overall_score;
+              }
+            } else {
+              console.error("Employee data not found in response:", enrollment);
+            }
+          } else {
+            console.error("Invalid response for an employee:", res);
           }
         });
 

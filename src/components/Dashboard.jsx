@@ -10,6 +10,15 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import Cookie from "js-cookie";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 const Dashboard = () => {
   const [totalEmployees, setTotalEmployees] = useState(0);
@@ -105,53 +114,39 @@ const Dashboard = () => {
         </Grid>
       </Grid>
 
-      {/* Top 5 Performers Section */}
+      {/* Top 5 Performers Chart */}
       <Typography variant="h5" align="center" sx={{ mt: 4 }}>
         Top 5 Performers
       </Typography>
-      <Grid container spacing={2} sx={{ mb: 4 }}>
-        {topPerformers.map((performer, index) => (
-          <Grid item xs={12} sm={4} key={index}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" align="center">
-                  {performer.employee.name}
-                </Typography>
-                <Typography variant="body1" align="center">
-                  Course: {performer.course.title}
-                </Typography>
-                <Typography variant="body2" align="center">
-                  Score: {performer.overall_score}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart
+          data={topPerformers}
+          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="employee.name" />
+          <YAxis />
+          <Tooltip />
+          <Bar dataKey="overall_score" fill="#82ca9d" />
+        </BarChart>
+      </ResponsiveContainer>
 
-      {/* Bottom 5 Performers Section */}
+      {/* Bottom 5 Performers Chart */}
       <Typography variant="h5" align="center" sx={{ mt: 4 }}>
         Bottom 5 Performers
       </Typography>
-      <Grid container spacing={2} sx={{ mb: 4 }}>
-        {bottomPerformers.map((performer, index) => (
-          <Grid item xs={12} sm={4} key={index}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" align="center">
-                  {performer.employee.name}
-                </Typography>
-                <Typography variant="body1" align="center">
-                  Course: {performer.course.title}
-                </Typography>
-                <Typography variant="body2" align="center">
-                  Score: {performer.overall_score}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart
+          data={bottomPerformers}
+          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="employee.name" />
+          <YAxis />
+          <Tooltip />
+          <Bar dataKey="overall_score" fill="#ff4d4f" />
+        </BarChart>
+      </ResponsiveContainer>
     </Container>
   );
 };
