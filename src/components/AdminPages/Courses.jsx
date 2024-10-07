@@ -7,16 +7,14 @@ import {
   Typography,
   Container,
   Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
+  Grid,
+  Card,
+  CardContent,
 } from "@mui/material";
 import axios from "axios";
 import Cookie from "js-cookie";
+import { ToastContainer, toast } from "react-toastify"; // Import ToastContainer and toast
+import "react-toastify/dist/ReactToastify.css"; // Import the CSS for toast notifications
 
 const Courses = () => {
   const [courses, setCourses] = useState([]);
@@ -44,19 +42,26 @@ const Courses = () => {
       };
       fetchCourses();
     }
-  }, [navigate]);
+  }, [navigate, user]);
 
   const handleCourseClick = (id) => {
     navigate(`/course/${id}`);
   };
 
-  const handleAddCourse = () => {
-    navigate("/addCourse"); // Navigate to the add course page
+  const handleAddCourse = async () => {
+    toast.success("Course added successfully!"); // Show success toast
+    navigate("/addCourse");
   };
 
   return (
     <Container sx={{ mt: 4, maxWidth: "1200px" }}>
-      <Typography variant="h4" gutterBottom align="center">
+      <Typography
+        variant="h4"
+        sx={{ mt: 4, textTransform: "uppercase" }}
+        gutterBottom
+        align="center"
+        color="primary"
+      >
         Courses
       </Typography>
       {user && user.role === "Admin" && (
@@ -66,35 +71,33 @@ const Courses = () => {
           </Button>
         </Box>
       )}
-      <TableContainer
-        component={Paper}
-        sx={{ border: "1px solid #ccc", mt: 2 }}
-      >
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Title</TableCell>
-              <TableCell>Description</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {courses.map((course, index) => (
-              <TableRow
-                key={course._id}
-                onClick={() => handleCourseClick(course._id)}
-                sx={{
-                  cursor: "pointer",
-                  backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#e0e0e0", // Alternating background colors
-                  "&:hover": { backgroundColor: "#d3d3d3" }, // Hover color
-                }}
-              >
-                <TableCell>{course.title}</TableCell>
-                <TableCell>{course.description}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <Grid container spacing={2}>
+        {courses.map((course) => (
+          <Grid item xs={12} sm={6} md={4} key={course._id}>
+            <Card
+              sx={{
+                backgroundColor: "#3411A3", // Primary color for the card background
+                color: "white", // White text
+                cursor: "pointer",
+                "&:hover": {
+                  backgroundColor: "#4e1eac", // Slightly lighter on hover
+                },
+                borderRadius: 2,
+                boxShadow: 3,
+              }}
+              onClick={() => handleCourseClick(course._id)}
+            >
+              <CardContent>
+                <Typography variant="h5" sx={{ textTransform: "uppercase" }}>
+                  {course.title}
+                </Typography>
+                <Typography variant="body2">{course.description}</Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+      <ToastContainer /> {/* Add ToastContainer to render toasts */}
     </Container>
   );
 };

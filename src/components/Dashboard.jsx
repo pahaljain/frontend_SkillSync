@@ -25,27 +25,26 @@ const Dashboard = () => {
   const [totalTrainers, setTotalTrainers] = useState(0);
   const [totalCourses, setTotalCourses] = useState(0);
   const [performanceData, setPerformanceData] = useState([]);
-  const user = Cookie.get("user") ? JSON.parse(Cookie.get("user")) : null;
   const navigate = useNavigate();
+  const user = Cookie.get("user") ? JSON.parse(Cookie.get("user")) : null;
 
   useEffect(() => {
-    if (!Cookie.get("user")) {
+    if (!user) {
       navigate("/login");
     } else {
       const fetchDashboardData = async () => {
         try {
-          const employeeResponse = await axios.get(
-            "http://localhost:5000/api/employees"
-          );
-          const trainerResponse = await axios.get(
-            "http://localhost:5000/api/users"
-          );
-          const courseResponse = await axios.get(
-            "http://localhost:5000/api/courses"
-          );
-          const performanceResponse = await axios.get(
-            "http://localhost:5000/api/performance"
-          );
+          const [
+            employeeResponse,
+            trainerResponse,
+            courseResponse,
+            performanceResponse,
+          ] = await Promise.all([
+            axios.get("http://localhost:5000/api/employees"),
+            axios.get("http://localhost:5000/api/users"),
+            axios.get("http://localhost:5000/api/courses"),
+            axios.get("http://localhost:5000/api/performance"),
+          ]);
 
           setTotalEmployees(employeeResponse.data.length);
           setTotalTrainers(trainerResponse.data.length);
@@ -57,56 +56,74 @@ const Dashboard = () => {
       };
       fetchDashboardData();
     }
-  }, [navigate, user]);
+  }, [navigate]); // Adding 'user' as a dependency
 
-  // Sorting top 5 and bottom 5 performers
   const topPerformers = [...performanceData]
     .sort((a, b) => b.overall_score - a.overall_score)
     .slice(0, 5);
-
   const bottomPerformers = [...performanceData]
     .sort((a, b) => a.overall_score - b.overall_score)
     .slice(0, 5);
 
   return (
     <Container sx={{ mt: 4, maxWidth: "1200px" }}>
-      <Typography variant="h4" gutterBottom align="center">
+      <Typography
+        variant="h4"
+        gutterBottom
+        align="center"
+        color="primary"
+        sx={{ textTransform: "uppercase" }}
+      >
         {user ? user.role : "Guest"} Dashboard
       </Typography>
 
-      {/* Existing Total Data Section */}
       <Grid container spacing={2} sx={{ mb: 4 }}>
         <Grid item xs={12} sm={4}>
-          <Card>
+          <Card sx={{ backgroundColor: "#3411A3" }}>
             <CardContent>
-              <Typography variant="h5" align="center">
+              <Typography
+                variant="h5"
+                align="center"
+                color="white"
+                sx={{ textTransform: "uppercase" }}
+              >
                 Total Employees
               </Typography>
-              <Typography variant="h6" align="center">
+              <Typography variant="h6" align="center" color="white">
                 {totalEmployees}
               </Typography>
             </CardContent>
           </Card>
         </Grid>
         <Grid item xs={12} sm={4}>
-          <Card>
+          <Card sx={{ backgroundColor: "#3411A3" }}>
             <CardContent>
-              <Typography variant="h5" align="center">
+              <Typography
+                variant="h5"
+                align="center"
+                color="white"
+                sx={{ textTransform: "uppercase" }}
+              >
                 Total Trainers
               </Typography>
-              <Typography variant="h6" align="center">
+              <Typography variant="h6" align="center" color="white">
                 {totalTrainers}
               </Typography>
             </CardContent>
           </Card>
         </Grid>
         <Grid item xs={12} sm={4}>
-          <Card>
+          <Card sx={{ backgroundColor: "#3411A3" }}>
             <CardContent>
-              <Typography variant="h5" align="center">
+              <Typography
+                variant="h5"
+                align="center"
+                color="white"
+                sx={{ textTransform: "uppercase" }}
+              >
                 Total Courses
               </Typography>
-              <Typography variant="h6" align="center">
+              <Typography variant="h6" align="center" color="white">
                 {totalCourses}
               </Typography>
             </CardContent>
@@ -114,8 +131,12 @@ const Dashboard = () => {
         </Grid>
       </Grid>
 
-      {/* Top 5 Performers Chart */}
-      <Typography variant="h5" align="center" sx={{ mt: 4 }}>
+      <Typography
+        variant="h5"
+        align="center"
+        sx={{ mt: 4, textTransform: "uppercase" }}
+        color="primary"
+      >
         Top 5 Performers
       </Typography>
       <ResponsiveContainer width="100%" height={300}>
@@ -127,12 +148,16 @@ const Dashboard = () => {
           <XAxis dataKey="employee.name" />
           <YAxis />
           <Tooltip />
-          <Bar dataKey="overall_score" fill="#82ca9d" />
+          <Bar dataKey="overall_score" fill="#F25F95" />
         </BarChart>
       </ResponsiveContainer>
 
-      {/* Bottom 5 Performers Chart */}
-      <Typography variant="h5" align="center" sx={{ mt: 4 }}>
+      <Typography
+        variant="h5"
+        align="center"
+        sx={{ mt: 4, textTransform: "uppercase" }}
+        color="primary"
+      >
         Bottom 5 Performers
       </Typography>
       <ResponsiveContainer width="100%" height={300}>
@@ -144,7 +169,7 @@ const Dashboard = () => {
           <XAxis dataKey="employee.name" />
           <YAxis />
           <Tooltip />
-          <Bar dataKey="overall_score" fill="#ff4d4f" />
+          <Bar dataKey="overall_score" fill="#F25F95" />
         </BarChart>
       </ResponsiveContainer>
     </Container>

@@ -22,30 +22,34 @@ const Navbar = () => {
 
   // Define the styles for active links
   const activeStyle = {
-    backgroundColor: "rgba(255, 255, 255, 0.2)", // Light background for active link
+    backgroundColor: "#F25F95", // Secondary color for active link
     borderRadius: "4px", // Rounded corners
+    color: "white", // Text color for active link
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ backgroundColor: "#3411A3" }}>
       <Toolbar>
         <Typography
           variant="h6"
           component={Link}
           to="/"
-          sx={{ flexGrow: 1 }}
-          style={{ textDecoration: "none", color: "white" }}
+          sx={{ flexGrow: 1, textDecoration: "none", color: "white" }}
         >
           SkillSync
         </Typography>
-        <Box>
+        <Box sx={{ display: "flex", gap: 2 }}>
           {!user ? (
             <>
               <Button
                 color="inherit"
                 component={Link}
                 to="/login"
-                sx={location.pathname === "/login" ? activeStyle : {}}
+                sx={
+                  location.pathname === "/login"
+                    ? activeStyle
+                    : { color: "white" }
+                }
               >
                 Login
               </Button>
@@ -54,7 +58,7 @@ const Navbar = () => {
                 color="inherit"
                 component={Link}
                 to="/signup"
-                sx={location.pathname === "/signup" ? activeStyle : {}}
+                sx={location.pathname === "/signup" ? activeStyle : { color: "white" }}
               >
                 Signup
               </Button> */}
@@ -65,18 +69,25 @@ const Navbar = () => {
                 color="inherit"
                 component={Link}
                 to="/courses"
-                sx={location.pathname === "/courses" ? activeStyle : {}}
+                sx={
+                  location.pathname === "/courses"
+                    ? activeStyle
+                    : { color: "white" }
+                }
               >
                 Courses
               </Button>
-              {/* Show admin-specific buttons */}
               {user.role === "Admin" && (
                 <>
                   <Button
                     color="inherit"
                     component={Link}
                     to="/employees"
-                    sx={location.pathname === "/employees" ? activeStyle : {}}
+                    sx={
+                      location.pathname === "/employees"
+                        ? activeStyle
+                        : { color: "white" }
+                    }
                   >
                     Employees
                   </Button>
@@ -84,7 +95,11 @@ const Navbar = () => {
                     color="inherit"
                     component={Link}
                     to="/trainers"
-                    sx={location.pathname === "/trainers" ? activeStyle : {}}
+                    sx={
+                      location.pathname === "/trainers"
+                        ? activeStyle
+                        : { color: "white" }
+                    }
                   >
                     Trainers
                   </Button>

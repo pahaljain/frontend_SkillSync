@@ -39,7 +39,7 @@ const Employees = () => {
       }
     };
     fetchEmployees();
-  }, []);
+  }, [open]);
 
   const handleAddEmployeeClick = () => {
     setOpen(true); // Open the dialog
@@ -108,7 +108,7 @@ const Employees = () => {
           <TableBody>
             {employees.map((employee, index) => (
               <TableRow
-                key={employee._id}
+                key={index}
                 sx={{
                   backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#e0e0e0", // Alternating background colors
                   "&:hover": { backgroundColor: "#d3d3d3" }, // Hover color
