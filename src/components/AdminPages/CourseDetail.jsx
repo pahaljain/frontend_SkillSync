@@ -41,11 +41,10 @@ const CourseDetail = () => {
         setCourse(courseResponse.data);
         setEmployees(courseResponse.data.employees);
 
-        // Fetch performance data
         const performanceResponses = await Promise.all(
           courseResponse.data.employees.map((employee) =>
             axios.get(
-              `http://localhost:5000/api/performance/get/${employee._id}/${id}` // Pass both employee ID and course ID
+              `http://localhost:5000/api/performance/get/${employee._id}/${id}`
             )
           )
         );
@@ -57,7 +56,6 @@ const CourseDetail = () => {
           if (res && res.data) {
             const enrollment = res.data;
 
-            // Now accessing enrollment.employee._id
             if (enrollment.employee && enrollment.employee._id) {
               if (enrollment.feedback) {
                 fetchedFeedback[enrollment.employee._id] = enrollment.feedback;
@@ -131,12 +129,10 @@ const CourseDetail = () => {
         overall_score: overallScore[selectedEmployee._id],
       });
 
-      // Show success notification
       toast.success("Score assigned successfully", { autoClose: 3000 });
       handleClose();
     } catch (error) {
       console.error("Error assigning score:", error);
-      // Show error notification
       toast.error("Failed to assign score", { autoClose: 3000 });
     }
   };
@@ -148,7 +144,13 @@ const CourseDetail = () => {
   return (
     <Box m={3}>
       {/* Title Section */}
-      <Typography variant="h4" gutterBottom>
+      <Typography
+        variant="h4"
+        gutterBottom
+        align="center"
+        color="primary"
+        sx={{ textTransform: "uppercase", mb: 4 }}
+      >
         {course.title}
       </Typography>
 
@@ -157,17 +159,23 @@ const CourseDetail = () => {
         {course.description}
       </Typography>
 
-      {/* Small Cards for Trainer and Total Employees */}
+      {/* Cards for Trainer and Total Employees */}
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid item xs={12} md={6}>
-          <Paper elevation={2} sx={{ padding: 2, bgcolor: "#eee" }}>
+          <Paper
+            elevation={2}
+            sx={{ padding: 2, backgroundColor: "#3411A3", color: "white" }}
+          >
             <Typography variant="h6">
               Trainer: {course.trainer.trainer_name}
             </Typography>
           </Paper>
         </Grid>
         <Grid item xs={12} md={6}>
-          <Paper elevation={2} sx={{ padding: 2, bgcolor: "#eee" }}>
+          <Paper
+            elevation={2}
+            sx={{ padding: 2, backgroundColor: "#3411A3", color: "white" }}
+          >
             <Typography variant="h6">
               Total Enrolled Employees: {employees.length}
             </Typography>
@@ -176,7 +184,10 @@ const CourseDetail = () => {
       </Grid>
 
       {/* Employees Table */}
-      <Typography variant="h6" sx={{ mb: 2 }}>
+      <Typography
+        variant="h5"
+        sx={{ mb: 2, textTransform: "uppercase", color: "#3411A3" }}
+      >
         Employees Enrolled
       </Typography>
       <TableContainer component={Paper}>
@@ -212,7 +223,7 @@ const CourseDetail = () => {
                 <TableCell>
                   <Button
                     variant="contained"
-                    color="primary"
+                    sx={{ backgroundColor: "#F25F95", color: "white" }}
                     onClick={() => handleClickOpen(employee)}
                   >
                     Assign Score
@@ -287,10 +298,10 @@ const CourseDetail = () => {
                 fullWidth
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <TextField
                 type="number"
-                label={<strong>Overall Score</strong>}
+                label="Overall Score"
                 value={overallScore[selectedEmployee?._id] || ""}
                 onChange={(e) => handleOverallScoreChange(e.target.value)}
                 inputProps={{ min: 0, max: 10, step: 1 }}
@@ -299,23 +310,17 @@ const CourseDetail = () => {
               />
             </Grid>
           </Grid>
-          {message && (
-            <Typography variant="body1" color="primary" sx={{ mt: 2 }}>
-              {message}
-            </Typography>
-          )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button
-            onClick={handleSubmitScore}
-            variant="contained"
-            color="primary"
-          >
-            Submit
+          <Button onClick={handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleSubmitScore} color="secondary">
+            Assign Score
           </Button>
         </DialogActions>
       </Dialog>
+
       <ToastContainer />
     </Box>
   );
