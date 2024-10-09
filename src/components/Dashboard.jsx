@@ -7,6 +7,10 @@ import {
   Card,
   CardContent,
   Container,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import axios from "axios";
 import Cookie from "js-cookie";
@@ -25,6 +29,7 @@ const Dashboard = () => {
   const [totalTrainers, setTotalTrainers] = useState(0);
   const [totalCourses, setTotalCourses] = useState(0);
   const [performanceData, setPerformanceData] = useState([]);
+  const [selectedFeedback, setSelectedFeedback] = useState("punctuality");
   const navigate = useNavigate();
   const user = Cookie.get("user") ? JSON.parse(Cookie.get("user")) : null;
 
@@ -52,39 +57,55 @@ const Dashboard = () => {
 
           const aggregatedPerformanceData = performanceResponse.data.reduce(
             (acc, current) => {
-              // Skip entries where employee is null
               if (!current.employee) {
                 return acc;
               }
 
               const employeeId = current.employee._id;
 
-              // If employee does not exist in accumulator, initialize it
               if (!acc[employeeId]) {
                 acc[employeeId] = {
                   employee: current.employee,
                   totalScore: 0,
                   count: 0,
+                  punctuality: 0,
+                  hardworking: 0,
+                  assignment_ontime: 0,
+                  communication_skills: 0,
                 };
               }
 
-              // Update total score and increment count
               acc[employeeId].totalScore += current.overall_score;
               acc[employeeId].count += 1;
+
+              if (current.feedback) {
+                acc[employeeId].punctuality +=
+                  current.feedback.punctuality || 0;
+                acc[employeeId].hardworking +=
+                  current.feedback.hardworking || 0;
+                acc[employeeId].assignment_ontime +=
+                  current.feedback.assignment_ontime || 0;
+                acc[employeeId].communication_skills +=
+                  current.feedback.communication_skills || 0;
+              }
 
               return acc;
             },
             {}
           );
 
-          console.log(aggregatedPerformanceData);
-
-
-          // Convert the aggregated data into an array
           const performanceArray = Object.values(aggregatedPerformanceData).map(
             (entry) => ({
               ...entry.employee,
-              overall_score: (entry.totalScore / entry.count).toFixed(2), // Average score
+              overall_score: (entry.totalScore / entry.count).toFixed(2),
+              punctuality: (entry.punctuality / entry.count).toFixed(2),
+              hardworking: (entry.hardworking / entry.count).toFixed(2),
+              assignment_ontime: (
+                entry.assignment_ontime / entry.count
+              ).toFixed(2),
+              communication_skills: (
+                entry.communication_skills / entry.count
+              ).toFixed(2),
             })
           );
 
@@ -100,9 +121,65 @@ const Dashboard = () => {
   const topPerformers = [...performanceData]
     .sort((a, b) => b.overall_score - a.overall_score)
     .slice(0, 5);
-  const bottomPerformers = [...performanceData]
-    .sort((a, b) => a.overall_score - b.overall_score)
-    .slice(0, 5);
+
+  const handleFeedbackChange = (event) => {
+    setSelectedFeedback(event.target.value);
+  };
+
+  const createFeedbackChart = (data, key, title) => (
+    <>
+      <Typography
+        variant="h5"
+        align="center"
+        sx={{ mt: 4, textTransform: "uppercase" }}
+        color="primary"
+      >
+        {title}
+      </Typography>
+      <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
+        <FormControl variant="filled" sx={{ minWidth: 190 }}>
+          <InputLabel id="feedback-select-label">Feedback</InputLabel>
+          <Select
+            labelId="feedback-select-label"
+            value={selectedFeedback}
+            onChange={handleFeedbackChange}
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  maxHeight: "200px",
+                },
+              },
+            }}
+          >
+            <MenuItem value="punctuality">Punctuality</MenuItem>
+            <MenuItem value="hardworking">Hardworking</MenuItem>
+            <MenuItem value="assignment_ontime">Assignment On Time</MenuItem>
+            <MenuItem value="communication_skills">
+              Communication Skills
+            </MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
+
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart
+          data={data}
+          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Bar dataKey={key} fill="#F25F95" />
+        </BarChart>
+      </ResponsiveContainer>
+    </>
+  );
+
+  // Sort and filter the performance data based on the selected feedback
+  const filteredTopPerformers = [...performanceData]
+    .sort((a, b) => b[selectedFeedback] - a[selectedFeedback]) // Sort based on selected feedback
+    .slice(0, 5); // Get top 5 performers
 
   return (
     <Container sx={{ mt: 4, maxWidth: "1200px" }}>
@@ -170,47 +247,47 @@ const Dashboard = () => {
         </Grid>
       </Grid>
 
-      <Typography
-        variant="h5"
-        align="center"
-        sx={{ mt: 4, textTransform: "uppercase" }}
-        color="primary"
-      >
-        Top 5 Performers
-      </Typography>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart
-          data={topPerformers}
-          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" /> {/* Changed to employee name */}
-          <YAxis />
-          <Tooltip />
-          <Bar dataKey="overall_score" fill="#F25F95" />
-        </BarChart>
-      </ResponsiveContainer>
+      {/* Top Performers and Feedback Scores Chart */}
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={6}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            <Typography
+              variant="h5"
+              align="center"
+              sx={{ mt: 4, textTransform: "uppercase" }}
+              color="primary"
+            >
+              Top 5 Performers
+            </Typography>
+            <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart
+                  data={topPerformers}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="overall_score" fill="#F25F95" />
+                </BarChart>
+              </ResponsiveContainer>
+            </Box>
+          </Box>
+        </Grid>
 
-      <Typography
-        variant="h5"
-        align="center"
-        sx={{ mt: 4, textTransform: "uppercase" }}
-        color="primary"
-      >
-        Bottom 5 Performers
-      </Typography>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart
-          data={bottomPerformers}
-          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" /> {/* Changed to employee name */}
-          <YAxis />
-          <Tooltip />
-          <Bar dataKey="overall_score" fill="#F25F95" />
-        </BarChart>
-      </ResponsiveContainer>
+        <Grid item xs={12} md={6}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            {createFeedbackChart(
+              filteredTopPerformers,
+              selectedFeedback,
+              `${
+                selectedFeedback.charAt(0).toUpperCase() + selectedFeedback.slice(1)
+              } Scores`
+            )}
+          </Box>
+        </Grid>
+      </Grid>
     </Container>
   );
 };
