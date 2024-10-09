@@ -50,11 +50,16 @@ const Dashboard = () => {
           setTotalTrainers(trainerResponse.data.length);
           setTotalCourses(courseResponse.data.length);
 
-          // Process performance data to aggregate scores
           const aggregatedPerformanceData = performanceResponse.data.reduce(
             (acc, current) => {
+              // Skip entries where employee is null
+              if (!current.employee) {
+                return acc;
+              }
+
               const employeeId = current.employee._id;
 
+              // If employee does not exist in accumulator, initialize it
               if (!acc[employeeId]) {
                 acc[employeeId] = {
                   employee: current.employee,
@@ -62,6 +67,8 @@ const Dashboard = () => {
                   count: 0,
                 };
               }
+
+              // Update total score and increment count
               acc[employeeId].totalScore += current.overall_score;
               acc[employeeId].count += 1;
 
@@ -69,6 +76,9 @@ const Dashboard = () => {
             },
             {}
           );
+
+          console.log(aggregatedPerformanceData);
+
 
           // Convert the aggregated data into an array
           const performanceArray = Object.values(aggregatedPerformanceData).map(
