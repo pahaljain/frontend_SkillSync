@@ -250,7 +250,9 @@ const Dashboard = () => {
       {/* Top Performers and Feedback Scores Chart */}
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+          <Box
+            sx={{ display: "flex", flexDirection: "column", height: "100%" }}
+          >
             <Typography
               variant="h5"
               align="center"
@@ -259,7 +261,14 @@ const Dashboard = () => {
             >
               Top 5 Performers
             </Typography>
-            <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Box
+              sx={{
+                flex: 1,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart
                   data={topPerformers}
@@ -277,12 +286,15 @@ const Dashboard = () => {
         </Grid>
 
         <Grid item xs={12} md={6}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+          <Box
+            sx={{ display: "flex", flexDirection: "column", height: "100%" }}
+          >
             {createFeedbackChart(
               filteredTopPerformers,
               selectedFeedback,
-              `${
-                selectedFeedback.charAt(0).toUpperCase() + selectedFeedback.slice(1)
+              `Top 5 ${
+                selectedFeedback.charAt(0).toUpperCase() +
+                selectedFeedback.slice(1)
               } Scores`
             )}
           </Box>
